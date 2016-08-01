@@ -133,9 +133,15 @@
     if (el.dispatchEvent) {
       if (typeof Event === 'function') {
         // For modern browsers
-        event = new Event(eventName, {
-          bubbles: true
-        });
+        try {
+          event = new Event(eventName, {
+            bubbles: true
+          });
+        } catch(e) {
+          // illegal constructor on Android native browser (< 5.0)
+          event = document.createEvent('Event');
+          event.initEvent(eventName, true, false);
+        }
       } else {
         // For IE since it doesn't support Event constructor
         event = document.createEvent('Event');
